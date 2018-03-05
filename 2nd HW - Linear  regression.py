@@ -8,9 +8,9 @@ np.set_printoptions(formatter={'float_kind':lambda x: "%.3f" % x})
 
 #%%
 #ubaci label
-def prepareData(data):
-    y = data.iloc[:,[-1]]
-    X = data.iloc[:,0:-1]
+def prepareData(data,label):
+    y = data.loc[:,[label]]
+    X = data.drop([label],axis=1)
     
     X_mean = X.mean()
     X_std = X.std()
@@ -30,8 +30,8 @@ def prepareData(data):
     #%% LEARN: 
     # stochastic (incremental) gradient descent 
     #OVO 
-def stochastic(data):   
-    X,y,n,m,w,alpha,lambda_penalty=prepareData(data)
+def stochastic(data,label):   
+    X,y,n,m,w,alpha,lambda_penalty=prepareData(data,label)
     for iter in range(10):
         print(iter,'Epoch')
         np.random.shuffle(X)    
@@ -65,8 +65,8 @@ def stochastic(data):
         
 
     #%% LEARN: GRADIENT DESCEND with lambda penalty batch
-def learn(data):
-    X,y,n,m,w,alpha,lambda_penalty=prepareData(data)
+def learn(data,label):
+    X,y,n,m,w,alpha,lambda_penalty=prepareData(data,label)
     for iter in range(10000):
        pred = X.dot(w.T)
        err = pred-y
@@ -87,7 +87,7 @@ def learn(data):
     #prediction = data_new.as_matrix().dot(w.T)
     #print(prediction)
 data = pd.read_csv('C:\\Users\\Dusica\\Desktop\\master aktuelno\\RAMU\\2. Linear regression\\2. Linear regression\\Domaci\\Boston_Housing.txt',sep='\t')
-learn(data)
-#stochastic(data)
+learn(data,'MEDV')
+#stochastic(data,'MEDV')
 #data = pd.read_csv('C:\\Users\\Dusica\\Downloads\\LR podaci\\house.csv')
 #stochastic(data)
