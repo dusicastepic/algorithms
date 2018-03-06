@@ -88,16 +88,21 @@ prediction = data_new.as_matrix().dot(w.T)
 print(prediction)
 
 
-#%% house ---- BATCH
-data = pd.read_csv('C:\\Users\\Dusica\\Desktop\\master aktuelno\\RAMU\\2. Linear regression\\2. Linear regression\\Kod\\house.csv')
-learn(data,'Price')
-#%% house ---- INCREMENTAL(online learning)
-data = pd.read_csv('C:\\Users\\Dusica\\Desktop\\master aktuelno\\RAMU\\2. Linear regression\\2. Linear regression\\Kod\\house.csv')
-stochastic(data,'Price')
+
 #%% PREDICT ---HOUSE
 data = pd.read_csv('C:\\Users\\Dusica\\Desktop\\master aktuelno\\RAMU\\2. Linear regression\\Kod\\house.csv')
 w=learn(data,'Price')
 data_new = pd.read_csv('C:\\Users\\Dusica\\Desktop\\master aktuelno\\RAMU\\2. Linear regression\\Kod\\house_new.csv')
-data_new=normalizeData(data,'Price')
+X,X_m,X_std=normalizeData(data,'Price')
+data_new= (data_new - X_m) / X_std
+data_new['X0'] = 1
 prediction = data_new.as_matrix().dot(w.T)
 print(prediction)
+
+
+#%% house ---- BATCH
+data = pd.read_csv('C:\\Users\\Dusica\\Desktop\\master aktuelno\\RAMU\\2. Linear regression\\Kod\\house.csv')
+learn(data,'Price')
+#%% house ---- INCREMENTAL(online learning)
+data = pd.read_csv('C:\\Users\\Dusica\\Desktop\\master aktuelno\\RAMU\\2. Linear regression\\Kod\\house.csv')
+stochastic(data,'Price')
