@@ -101,7 +101,7 @@ def kmeans(data,k,ponder=None,dist_type=0):
 def determineK(data,ponder=None,dist=0):
    if ponder is None:
        ponder=np.ones((data.shape[1])).astype(int)
-   numberOfK=range(3,10)
+   numberOfK=range(3,8)
    all_si=[]
    
    for k in numberOfK:
@@ -153,15 +153,17 @@ def calculateSI(k,centroids,assign,data):
     si=np.array(si).sum()/len(si)
     return si
          
-#POZIV METODE    
-#data = pd.read_csv('C:\\Users\\Dusica\\Desktop\\master aktuelno\\RAMU\\2. Linear regression\\2. Linear regression\\Domaci\\Boston_Housing.txt',sep='\t')
-# 0 Euclidean, 1 Manhattan/City block
-#
-#kmeans(data,[1,1,2,1,1,1,1,1,1,2,1,1,1,1],0)
-
-#data=pd.read_csv('C:\\Users\\Dusica\\Downloads\\life.csv').set_index('country')
+#POZIV METODA   
+#%% BOSTON HOUSING
 data = pd.read_csv('C:\\Users\\Dusica\\Desktop\\master aktuelno\\RAMU\\2. Linear regression\\2. Linear regression\\Domaci\\Boston_Housing.txt',sep='\t')
+# 0 Euclidean, 1 Manhattan/City block
+determineK(data,dist=0)
 
-determineK(data)
+determineK(data,[1,1,2,1,1,1,1,1,1,2,1,1,1,1],0)
 
+#%% COUNTRIES
 
+data=pd.read_csv('C:\\Users\\Dusica\\Downloads\\life.csv').set_index('country')
+determineK(data,dist=0)
+
+#kmeans(data,4,dist_type=0)

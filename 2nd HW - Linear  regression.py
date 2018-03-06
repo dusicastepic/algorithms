@@ -1,35 +1,33 @@
 import pandas as pd
 import numpy as np
 np.random.seed(1)
-np.set_printoptions(formatter={'float_kind':lambda x: "%.3f" % x})
+#np.set_printoptions(formatter={'float_kind':lambda x: "%.3f" % x})
     
-#%% PREPARE DATA
-#data = pd.read_csv('C:\\Users\\Dusica\\Downloads\\LR podaci\\house.csv')
-
 #%%
-#ubaci label
-def prepareData(data,label):
-    y = data.loc[:,[label]]
+def normalizeData(data,label):
     X = data.drop([label],axis=1)
-    
     X_mean = X.mean()
     X_std = X.std()
     X = (X - X_mean) / X_std
     
     X['X0'] = 1
+    return X,X_mean,X_std
+#%%
+def prepareData(data,label):
+    y = data.loc[:,[label]]
+    
+    X,X_mean,X_std=normalizeData(data,label)
      
     y = y.as_matrix()
     X = X.as_matrix()
     n,m = X.shape
     
-# INITIALIZATION
     w = np.random.random((1,m))
     alpha = 0.06
     lambda_penalty=10
     return X,y,n,m,w,alpha,lambda_penalty
-    #%% LEARN: 
-    # stochastic (incremental) gradient descent 
-    #OVO 
+#%% LEARN: 
+# stochastic (incremental) gradient descent 
 def stochastic(data,label):   
     X,y,n,m,w,alpha,lambda_penalty=prepareData(data,label)
     for iter in range(10):
@@ -38,7 +36,7 @@ def stochastic(data,label):
         for i in range((X.shape[0])):
            pred = (pd.DataFrame(X).iloc[i,:]).as_matrix().dot(w.T)
            err = pred-y[i]
-           grad = err*(pd.DataFrame(X).iloc[i,:].as_matrix())#+(lambda_penalty*w)
+           grad = err*(pd.DataFrame(X).iloc[i,:].as_matrix()) 
            w = w - alpha * grad
            #grad_norm = abs(grad).sum()
            
@@ -56,15 +54,8 @@ def stochastic(data,label):
         print('Whole dataset:',mean_square_error)
         print(w)
         
-           #break
     #return w   
-        
-           #if grad_norm<0.1 or mean_square_error<10: break
-        #mean_square_error = err*(err)
-       
-        
-
-    #%% LEARN: GRADIENT DESCEND with lambda penalty batch
+#%% LEARN: GRADIENT DESCEND with lambda penalty batch
 def learn(data,label):
     X,y,n,m,w,alpha,lambda_penalty=prepareData(data,label)
     for iter in range(10000):
@@ -79,15 +70,34 @@ def learn(data,label):
        if grad_norm<0.1 or mean_square_error<10: break
        print(iter, grad_norm, mean_square_error)
     return w
-    
-    #%% PREDICT
-    #data_new = pd.read_csv('C:\\Users\\Dusica\\Downloads\\LR podaci\\house_new.csv')
-    #data_new = (data_new-X_mean)/X_std
-    #data_new['X0'] = 1
-    #prediction = data_new.as_matrix().dot(w.T)
-    #print(prediction)
+
+#%% BOSTON HOUSING ---- BATCH
 data = pd.read_csv('C:\\Users\\Dusica\\Desktop\\master aktuelno\\RAMU\\2. Linear regression\\2. Linear regression\\Domaci\\Boston_Housing.txt',sep='\t')
 learn(data,'MEDV')
-#stochastic(data,'MEDV')
-#data = pd.read_csv('C:\\Users\\Dusica\\Downloads\\LR podaci\\house.csv')
-#stochastic(data)
+#%% BOSTON HOUSING ---- INCREMENTAL(online learning)
+data = pd.read_csv('C:\\Users\\Dusica\\Desktop\\master aktuelno\\RAMU\\2. Linear regression\\2. Linear regression\\Domaci\\Boston_Housing.txt',sep='\t')
+stochastic(data,'MEDV')
+#%% PREDICT ---BOSTON HOUSING
+data = pd.read_csv('C:\\Users\\Dusica\\Desktop\\master aktuelno\\RAMU\\2. Linear regression\\2. Linear regression\\Domaci\\Boston_Housing.txt',sep='\t')
+w=learn(data,'MEDV')
+data_new = pd.read_csv('C:\\Users\\Dusica\\Desktop\\master aktuelno\\RAMU\\2. Linear regression\\2. Linear regression\\Domaci\\BH_new.csv')
+X,X_m,X_std=normalizeData(data,'MEDV')
+data_new= (data_new - X_m) / X_std
+data_new['X0'] = 1
+prediction = data_new.as_matrix().dot(w.T)
+print(prediction)
+
+
+#%% house ---- BATCH
+data = pd.read_csv('C:\\Users\\Dusica\\Desktop\\master aktuelno\\RAMU\\2. Linear regression\\2. Linear regression\\Kod\\house.csv')
+learn(data,'Price')
+#%% house ---- INCREMENTAL(online learning)
+data = pd.read_csv('C:\\Users\\Dusica\\Desktop\\master aktuelno\\RAMU\\2. Linear regression\\2. Linear regression\\Kod\\house.csv')
+stochastic(data,'Price')
+#%% PREDICT ---HOUSE
+data = pd.read_csv('C:\\Users\\Dusica\\Desktop\\master aktuelno\\RAMU\\2. Linear regression\\Kod\\house.csv')
+w=learn(data,'Price')
+data_new = pd.read_csv('C:\\Users\\Dusica\\Desktop\\master aktuelno\\RAMU\\2. Linear regression\\Kod\\house_new.csv')
+data_new=normalizeData(data,'Price')
+prediction = data_new.as_matrix().dot(w.T)
+print(prediction)
